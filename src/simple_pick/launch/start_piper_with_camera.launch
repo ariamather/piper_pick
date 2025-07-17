@@ -1,0 +1,23 @@
+<launch>
+  <!-- 启动机械臂节点 -->
+  <include file="$(find piper)/launch/start_single_piper.launch">
+      <arg name="can_port" value="can_piper"/>
+      <arg name="auto_enable" value="true"/>
+      <!-- <arg name="girpper_exist" value="true"/> -->
+  </include>
+  <!-- roslaunch astra_camera dabai_dc1.launch -->
+  <include file="$(find astra_camera)/launch/dabai_dc1.launch" />
+  <!-- 启动相机节点 -->
+  <node pkg="simple_pick" type="tf_broadcaster_node.py" name="tf_broadcaster_node" output="screen"/>
+  <!-- 静态TF：end_effector -> gripper -->
+  <node pkg="tf" type="static_transform_publisher" name="static_gripper_tf" args="0 0 0.13 0 0 0 end_effector gripper 100"/>
+
+  <!-- 静态TF：end_effector -> camera_link -->
+  <node pkg="tf" type="static_transform_publisher" name="static_camera_tf" args="-0.075 0.03 0.04 0 -1.1694 0 end_effector camera_link 100"/>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find simple_pick)/config/rviz.rviz" output="screen">
+    <param name="use_sim_time" value="false"/>
+  </node>
+
+
+</launch>
